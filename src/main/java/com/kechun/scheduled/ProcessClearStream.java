@@ -26,12 +26,8 @@ public class ProcessClearStream extends Thread {
             // 打印信息
             String line = null;
             while ((line = br.readLine()) != null) {
-//                System.out.println(type + ">" + line);
                 LOG.info(type+":"+line);
-
             }
-            // 不打印信息
-//           while (br.readLine() != null);
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }

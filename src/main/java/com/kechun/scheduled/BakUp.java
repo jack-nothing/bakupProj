@@ -41,8 +41,8 @@ public class BakUp{
                             .append("zip -r ").append(bakUpTargetPath).append("$(date +%Y%m%d).proj.zip ").append(projPath)
                             .append("&& ")
                             .append("zip -r ").append(bakUpTargetPath).append("$(date +%Y%m%d).log.zip ").append(LogPath)
-                            .append("> ")
-                            .append(LogPath)
+                            .append("&& ")
+                            .append("> ").append(LogPath)
                             .toString(),
             });
             LOG.info("wait result");

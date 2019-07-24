@@ -20,16 +20,22 @@ public class ProcessClearStream extends Thread {
     public void run() {
         BufferedReader br = null;
         try {
-            InputStreamReader inputStreamReader = new InputStreamReader(
-                    inputStream);
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
              br = new BufferedReader(inputStreamReader);
-            // 打印信息
-            String line = null;
+            String line ;
             while ((line = br.readLine()) != null) {
                 LOG.info(type+":"+line);
             }
         } catch (IOException ioe) {
             ioe.printStackTrace();
+        }finally {
+            if(br !=null){
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 }

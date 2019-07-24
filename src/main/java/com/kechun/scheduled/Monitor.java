@@ -11,7 +11,7 @@ public class Monitor {
 
 
 
-    @Scheduled(cron = "50 59 23 * * ? ")
+    @Scheduled(cron = "59 59 23 * * ? ")
     public void monitor() {
         LOG.info("bakUp_ohtools");
     }

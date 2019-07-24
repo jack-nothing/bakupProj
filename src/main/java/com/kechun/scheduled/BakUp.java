@@ -3,6 +3,7 @@ package com.kechun.scheduled;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -13,9 +14,16 @@ import java.util.Random;
 @Component
 public class BakUp{
 
+
+    @Value("${bakUpTargetPath}")
+    private String bakUpTargetPath;
+    @Value("${projPath}")
+    private String projPath;
+    @Value("${LogPath}")
+    private String LogPath;
+
     private static final Logger LOG = LoggerFactory.getLogger(BakUp.class);
 
-//    @Scheduled(cron = "50 59 23 * * ? ")
     @Scheduled(cron = "0/15 * * * * ? ")
     public void bakUp() {
         LOG.info("start:");
@@ -30,9 +38,11 @@ public class BakUp{
                             .append("&& ")
                             .append("mkdir /data/BAK/$(date +%Y%m%d) ")
                             .append("&& ")
-                            .append("zip -r /data/BAK/$(date +%Y%m%d).zip /data/BAK/Monitor_bakupProj.log ")//project path
+                            .append("zip -r ").append(bakUpTargetPath).append("$(date +%Y%m%d).proj.zip ").append(projPath)
                             .append("&& ")
-                            .append("> /data/BAK/Monitor_bakupProj.log ")
+                            .append("zip -r ").append(bakUpTargetPath).append("$(date +%Y%m%d).log.zip ").append(LogPath)
+                            .append("> ")
+                            .append(LogPath)
                             .toString(),
             });
             LOG.info("wait result");
@@ -48,7 +58,6 @@ public class BakUp{
             if(process!=null)
             process.destroy();
         }
-        process = null;
     }
 
 

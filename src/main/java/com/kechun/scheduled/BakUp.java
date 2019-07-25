@@ -63,13 +63,13 @@ public class BakUp {
 
     private JavaMailSenderImpl getInstall(){
         if (javaMailSender ==null){
-            return initJavaMailSenderImpl();
+            javaMailSender = initJavaMailSenderImpl();
         }
         return javaMailSender;
     }
 
-//    @Scheduled(cron = "0/30 * * * * ? ")
-    @Scheduled(cron = "0 0 6 * * ? ")
+    @Scheduled(cron = "0/30 * * * * ? ")
+//    @Scheduled(cron = "0 0 6 * * ? ")
     public void bakUp() {
         SimpleDateFormat sdf = new SimpleDateFormat("YYYYMMdd");
         curDay = sdf.format(new Date());
@@ -121,8 +121,8 @@ public class BakUp {
         }
     }
 
-//    @Scheduled(cron = "0/40 * * * * ? ")
-    @Scheduled(cron = "0 0 9 * * ? ")
+    @Scheduled(cron = "0/40 * * * * ? ")
+//    @Scheduled(cron = "0 0 9 * * ? ")
     public void checkResult() {
         Runtime runtime = Runtime.getRuntime();
         Process process = null;
@@ -158,6 +158,7 @@ public class BakUp {
             if (process != null)
                 process.destroy();
         }
+        getInstall();
         tpm.addExecuteTask(new EmailSender(javaMailSender, "cc@163.com", "857812506@qq.com", fromUser, "BAK-END", "BAK:"+curDay));
 
 

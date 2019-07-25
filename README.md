@@ -21,3 +21,4 @@ linux的cron固然方便，但是还是不及java定时器的灵活</br>
 在使用java虚机执行shell的时候遇到了很多坑，不过还好核心问题解决了</br>
 使用这个项目，你需要修改配置的路径，以及想要备份的文件的路径,至于代码里面就是CTRL+C,V</br>
 
+打成jar包之后， 直接启动 <h5>java -jar bakupProj.jar</h5>

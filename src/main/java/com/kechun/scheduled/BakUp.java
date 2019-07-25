@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Properties;
 
 
 @Component
@@ -49,7 +50,10 @@ public class BakUp {
     @Value("${emailProtocol}")
     private String emailProtocol;
     @Value("${port}")
-    private String port;
+    private Integer port;
+
+    @Value("${mail.smtp.socketFactory.class}")
+    private String socketFactoryClass;
 
     private static String curDay;
 
@@ -65,8 +69,8 @@ public class BakUp {
         return javaMailSender;
     }
 
-    @Scheduled(cron = "0/30 * * * * ? ")
-//    @Scheduled(cron = "0 0 6 * * ? ")
+//    @Scheduled(cron = "0/30 * * * * ? ")
+    @Scheduled(cron = "0 0 6 * * ? ")
     public void bakUp() {
         SimpleDateFormat sdf = new SimpleDateFormat("YYYYMMdd");
         curDay = sdf.format(new Date());
@@ -118,8 +122,8 @@ public class BakUp {
         }
     }
 
-    @Scheduled(cron = "0/40 * * * * ? ")
-//    @Scheduled(cron = "0 0 9 * * ? ")
+//    @Scheduled(cron = "0/40 * * * * ? ")
+    @Scheduled(cron = "0 0 9 * * ? ")
     public void checkResult() {
         Runtime runtime = Runtime.getRuntime();
         Process process = null;
@@ -156,7 +160,7 @@ public class BakUp {
                 process.destroy();
         }
         getInstall();
-        tpm.addExecuteTask(new EmailSender(javaMailSender, "cc@163.com", "857812506@qq.com", fromUser, "BAK-END", "BAK:"+curDay));
+        tpm.addExecuteTask(new EmailSender(javaMailSender, "liucheng_iov@139.com", "857812506@qq.com", fromUser, "备份操作结束:"+(e1==null?"BAK SUCCESS":"BAK FAILD，Exception:"+e1.getMessage()), "BAK:"+curDay));
 
 
         //TODO send email or phone
@@ -170,16 +174,21 @@ public class BakUp {
     }
 
 
-
-
     private JavaMailSenderImpl initJavaMailSenderImpl(){
+        Properties properties = new Properties();
+        properties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+        properties.put("mail.smtp.auth", true);
+        properties.put("mail.smtp.starttls.enable", true);
+        properties.put("mail.smtp.timeout", 5000);
+
         javaMailSender = new JavaMailSenderImpl();
         javaMailSender.setHost(host);
+        javaMailSender.setPort(port);
         javaMailSender.setUsername(emailAccount);
         javaMailSender.setPassword(emailPassword);
         javaMailSender.setDefaultEncoding(emailEnCode);
         javaMailSender.setProtocol(emailProtocol);
-        javaMailSender.setPort(Integer.parseInt(port));
+        javaMailSender.setJavaMailProperties(properties);
         return javaMailSender;
     }
 

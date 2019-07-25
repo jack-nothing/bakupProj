@@ -1,9 +1,12 @@
 package com.kechun.scheduled;
 
 
+import com.kechun.util.EmailSender;
+import com.kechun.util.ThreadPoolManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -20,25 +23,50 @@ public class BakUp {
 
     @Value("${bakUpTargetPath}")
     private String bakUpTargetPath;
-    @Value("${xxxx.projPath}")
-    private String xxxxProjPath;
-    @Value("${xxxx.LogPath}")
-    private String xxxxLogPath;
+    @Value("${ohconsole.projPath}")
+    private String ohconsoleProjPath;
+    @Value("${ohconsole.LogPath}")
+    private String ohconsoleLogPath;
 
-    @Value("${xxx.projPath}")
-    private String xxxProjPath;
-    @Value("${xxxxx.projPath}")
-    private String xxxxxProjPath;
-    @Value("${xxx.projPath}")
-    private String xxxxxxProjPath;
+    @Value("${mcs.projPath}")
+    private String mcsProjPath;
+    @Value("${ohtools.projPath}")
+    private String ohtoolsProjPath;
+    @Value("${mqtt.projPath}")
+    private String mqttProjPath;
 
-    @Value("${xxx.LogPath}")
-    private String xxxLogPath;
+    @Value("${mcs.LogPath}")
+    private String mcsLogPath;
+
+
+    @Value("${fromUser}")
+    private String fromUser;
+    @Value("${host}")
+    private String host;
+    @Value("${emailAccount}")
+    private String emailAccount;
+    @Value("${emailPassword}")
+    private String emailPassword;
+    @Value("${emailEnCode}")
+    private String emailEnCode;
+    @Value("${emailProtocol}")
+    private String emailProtocol;
+    @Value("${port}")
+    private String port;
 
     private static String curDay;
 
+    private JavaMailSenderImpl javaMailSender = null;
+    static final ThreadPoolManager tpm = new ThreadPoolManager(8);
 
     private static final Logger LOG = LoggerFactory.getLogger(BakUp.class);
+
+    private JavaMailSenderImpl getInstall(){
+        if (javaMailSender ==null){
+            return initJavaMailSenderImpl();
+        }
+        return javaMailSender;
+    }
 
 //    @Scheduled(cron = "0/30 * * * * ? ")
     @Scheduled(cron = "0 0 6 * * ? ")
@@ -57,21 +85,21 @@ public class BakUp {
                             .append("&& ")
                             .append("mkdir /data/BAK/$(date +%Y%m%d) ")
                             .append("&& ")
-                            .append("zip -q -r ").append(bakUpTargetPath).append("$(date +%Y%m%d)/xxxx.WEB-INF.zip ").append(xxxProjPath + " ")
+                            .append("zip -q -r ").append(bakUpTargetPath).append("$(date +%Y%m%d)/ohconsole.WEB-INF.zip ").append(ohconsoleProjPath + " ")
                             .append("&& ")
-                            .append("zip -q -r ").append(bakUpTargetPath).append("$(date +%Y%m%d)/xxxx.catalina.zip ").append(xxxxLogPath + " ")
+                            .append("zip -q -r ").append(bakUpTargetPath).append("$(date +%Y%m%d)/ohconsole.catalina.zip ").append(ohconsoleLogPath + " ")
                             .append("&& ")
-                            .append("> ").append(xxxxLogPath)
+                            .append("> ").append(ohconsoleLogPath)
                             .append("&& ")
-                            .append("zip -q -r ").append(bakUpTargetPath).append("$(date +%Y%m%d)/xxxx.WEB-INF.zip ").append(xxxxxProjPath + " ")
+                            .append("zip -q -r ").append(bakUpTargetPath).append("$(date +%Y%m%d)/mcs.WEB-INF.zip ").append(mcsProjPath + " ")
                             .append("&& ")
-                            .append("zip -q -r ").append(bakUpTargetPath).append("$(date +%Y%m%d)/xxxx.WEB-INF.zip ").append(xxxProjPath + " ")
+                            .append("zip -q -r ").append(bakUpTargetPath).append("$(date +%Y%m%d)/ohtools.WEB-INF.zip ").append(ohtoolsProjPath + " ")
                             .append("&& ")
-                            .append("zip -q -r ").append(bakUpTargetPath).append("$(date +%Y%m%d)/xxxx.WEB-INF.zip ").append(xxxProjPath + " ")
+                            .append("zip -q -r ").append(bakUpTargetPath).append("$(date +%Y%m%d)/mqtt.WEB-INF.zip ").append(mqttProjPath + " ")
                             .append("&& ")
-                            .append("zip -q -r ").append(bakUpTargetPath).append("$(date +%Y%m%d)/xxxx.catalina.zip ").append(xxxLogPath + " ")
+                            .append("zip -q -r ").append(bakUpTargetPath).append("$(date +%Y%m%d)/mcs_ohtools_mqtt.catalina.zip ").append(mcsLogPath + " ")
                             .append("&& ")
-                            .append("> ").append(xxxLogPath)
+                            .append("> ").append(mcsLogPath)
                             .toString(),
             });
             LOG.info("shell:" + sbf.toString());
@@ -130,14 +158,31 @@ public class BakUp {
             if (process != null)
                 process.destroy();
         }
+        tpm.addExecuteTask(new EmailSender(javaMailSender, "cc@163.com", "857812506@qq.com", fromUser, "BAK-END", "BAK:"+curDay));
+
 
         //TODO send email or phone
         //BUG----run()-->set bakFlag
         if(e1 !=null || bakFlag == false){
-            LOG.info("bakUp-fiald!");
+//            LOG.info("bakUp-fiald!");
         }
         if(bakFlag){
-            LOG.info("bakUp-success!");
+//            LOG.info("bakUp-success!");
         }
     }
+
+
+
+
+    private JavaMailSenderImpl initJavaMailSenderImpl(){
+        javaMailSender = new JavaMailSenderImpl();
+        javaMailSender.setHost(host);
+        javaMailSender.setUsername(emailAccount);
+        javaMailSender.setPassword(emailPassword);
+        javaMailSender.setDefaultEncoding(emailEnCode);
+        javaMailSender.setProtocol(emailProtocol);
+        javaMailSender.setPort(Integer.parseInt(port));
+        return javaMailSender;
+    }
+
 }

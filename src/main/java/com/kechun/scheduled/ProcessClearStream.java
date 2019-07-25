@@ -30,7 +30,7 @@ public class ProcessClearStream extends Thread {
             while ((line = br.readLine()) != null) {
                 LOG.info(type + ":" + line);
                 if (cruDay != null) {
-                    if ("xxxx.WEB-INF.zip".equals(line) || line.indexOf("xxxx.WEB-INF.zip") != -1){
+                    if ("ohconsole.WEB-INF.zip".equals(line) || line.indexOf("ohconsole.WEB-INF.zip") != -1){
                         LOG.info("CHECK:");
                         LOG.info(type + ":" + line);
                         bakFlag = true;

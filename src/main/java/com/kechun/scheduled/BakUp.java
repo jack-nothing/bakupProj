@@ -33,16 +33,16 @@ public class BakUp{
             StringBuffer sbf = new StringBuffer();
             process = runtime.exec(new String[]{
                     "/bin/sh",
-                    "-c ",
+                    "-c",
                     sbf.append("ls ")
-                            .append(" && ")
+                            .append("&& ")
                             .append("mkdir /data/BAK/$(date +%Y%m%d) ")
-                            .append(" && ")
-                            .append("zip -q -r ").append(bakUpTargetPath).append("$(date +%Y%m%d)/pro_bak.zip ").append(projPath)
-                            .append(" && ")
-                            .append("zip -q -r ").append(bakUpTargetPath).append("$(date +%Y%m%d)/catalina.zip ").append(LogPath)
-                            .append(" && ")
-                            .append(" > ").append(LogPath)
+                            .append("&& ")
+                            .append("zip -q -r ").append(bakUpTargetPath).append("$(date +%Y%m%d)/pro_bak.zip ").append(projPath+" ")
+                            .append("&& ")
+                            .append("zip -q -r ").append(bakUpTargetPath).append("$(date +%Y%m%d)/catalina.zip ").append(LogPath+" ")
+                            .append("&& ")
+                            .append("> ").append(LogPath)
                             .toString(),
             });
             LOG.info("shell:"+sbf.toString());
@@ -50,8 +50,8 @@ public class BakUp{
             int status = process.waitFor();
             new ProcessClearStream(process.getInputStream(),"INFO").start();
             new ProcessClearStream(process.getErrorStream(),"ERROR").start();
-            Thread.sleep(10000);
-//            LOG.info("end status:"+status);
+            Thread.sleep(3000);
+            LOG.info("end status:"+status);
             LOG.info("end");
         } catch (Exception e) {
             e.printStackTrace();

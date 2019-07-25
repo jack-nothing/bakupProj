@@ -26,7 +26,6 @@ linux的cron固然方便，但是还是不及java定时器的灵活</br>
     <code>
     @Scheduled(cron = "0 0 6 * * ? ")
     public void bakUp() {
-    
     }
     </code>
 打成jar包之后， 直接启动 <h5>java -jar bakupProj.jar </h5>

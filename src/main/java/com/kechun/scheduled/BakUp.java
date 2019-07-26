@@ -96,8 +96,6 @@ public class BakUp {
                             .append("&& ")
                             .append("zip -q -r ").append(bakUpTargetPath).append("$(date +%Y%m%d)/ohtools.WEB-INF.zip ").append(ohtoolsProjPath + " ")
                             .append("&& ")
-                            .append("zip -q -r ").append(bakUpTargetPath).append("$(date +%Y%m%d)/mqtt.WEB-INF.zip ").append(mqttProjPath + " ")
-                            .append("&& ")
                             .append("zip -q -r ").append(bakUpTargetPath).append("$(date +%Y%m%d)/mcs_ohtools_mqtt.catalina.zip ").append(mcsLogPath + " ")
                             .append("&& ")
                             .append("> ").append(mcsLogPath)
